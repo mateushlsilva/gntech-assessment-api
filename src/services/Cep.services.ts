@@ -1,0 +1,52 @@
+import { AppDataSource, redis } from "../config"
+import { CepEntities } from "../entities/cep.entities"
+import { getCepData } from "../external";
+import { MessageCepReturn } from "../types";
+
+class CepService {
+    public async getCepService(cep: string): Promise<MessageCepReturn>{
+        try{
+            // Vai buscar no redis primeiro 
+            const cacheKey = `cep:${cep}`
+            const cached = await redis.get(cacheKey);
+            if (cached) {
+                console.log("Cache hit");
+                return {data: JSON.parse(cached), error: false, message: "success!", source: 'Internal'};
+            }
+            // Vai buscar no banco de dados
+            const repository = AppDataSource.getRepository(CepEntities)
+            const findCep = await repository.findOneBy({cep: cep})
+
+            if (findCep) {
+                await redis.set(cacheKey, JSON.stringify(findCep), "EX", 3600);
+                console.log("Cache miss (DB)");
+                return {error: false, message: "success!", data: findCep, source: 'Internal' };
+            }
+
+           // Vai buscar na API Externa
+            const { data, error, message, source } = await getCepData(cep)
+            if (error === true || !data) {
+                return {error, message, data, source}
+            }
+            
+            const newCep = repository.create({
+                cep: data.cep,
+                city: data.city,
+                neighborhood: data.neighborhood,
+                service: data.service,
+                state: data.state,
+                street: data.street,
+            });
+            const saveCep = await repository.save(newCep)
+            await redis.set(cacheKey, JSON.stringify(saveCep), "EX", 3600);
+            console.log("Cache miss (API)");
+            return {error: false, message: "success!", data: saveCep, source: 'external'}
+        }
+        catch (err: unknown){
+            const errorMessage = err instanceof Error ? err.message : "Unexpected error";
+            return { error: true, message: errorMessage, data: null, source: null };
+        }
+    }
+}
+
+export default new CepService()
