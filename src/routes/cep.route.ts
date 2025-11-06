@@ -217,4 +217,107 @@ routes.get('/all', CepController.getAllCepController)
 
 routes.post('/post', CepController.postCepController)
 
+/**
+ * @swagger
+ * /cep/put/{id}:
+ *   put:
+ *     summary: Atualiza um CEP existente
+ *     description: Atualiza os dados de um CEP no banco de dados e no cache Redis.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do CEP a ser atualizado
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       description: Objeto com os dados do CEP
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cep:
+ *                 type: string
+ *                 example: "12236610"
+ *               state:
+ *                 type: string
+ *                 example: "SP"
+ *               city:
+ *                 type: string
+ *                 example: "São José dos Campos"
+ *               neighborhood:
+ *                 type: string
+ *                 example: "Cidade Morumbi"
+ *               street:
+ *                 type: string
+ *                 example: "Rua Maximino José de Almeida"
+ *               service:
+ *                 type: string
+ *                 example: "open-cep"
+ *     responses:
+ *       200:
+ *         description: CEP atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "success!"
+ *                 data:
+ *                   type: object
+ *                   example:
+ *                     id: 1
+ *                     cep: "12236610"
+ *                     state: "SP"
+ *                     city: "São José dos Campos"
+ *                     neighborhood: "Cidade Morumbi"
+ *                     street: "Rua Maximino José de Almeida"
+ *                     service: "open-cep"
+ *       404:
+ *         description: CEP não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erro 404"
+ *                 error:
+ *                   type: boolean
+ *                   example: true
+ * 
+ *       409:
+ *         description: Chave duplicada (CEP já existe)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "CEP já existe"
+ *                 error:
+ *                   type: boolean
+ *                   example: true
+ * 
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error!"
+ */
+
+routes.put('/put/:id', CepController.putCepController)
+
 export default routes

@@ -103,8 +103,37 @@ class CepService {
         }
     }
 
-    public async putCepService(){
+    public async putCepService(id: any, data: CepData): Promise<MessageCepReturn>{
+        try{
+            const repository = AppDataSource.getRepository(CepEntities)
+            const findCep = await repository.findOneBy({id: id})
 
+            if (!findCep) {
+                return { error: true, message: "Erro 404", data: null, source: null }
+            }
+            const cacheKey = `cep:${data.cep}`
+
+            findCep.cep = data.cep
+            findCep.city = data.city
+            findCep.neighborhood = data.neighborhood
+            findCep.service = data.service
+            findCep.state = data.state
+            findCep.street = data.street
+           
+            const saveCep = await repository.save(findCep)
+            await redis.set(cacheKey, JSON.stringify(saveCep), "EX", 3600);
+            console.log("Cache miss (API)");
+            return {error: false, message: "success!", data: saveCep, source: 'Internal'}
+
+        }
+        catch (err: any) {
+            if (err.code === '23505') {
+                return { error: true, message: "CEP já existe!", data: null, source: null }
+            }
+
+            const errorMessage = err instanceof Error ? err.message : "Unexpected error";
+            return { error: true, message: errorMessage, data: null, source: null };
+        }
     }
 
     public async deleteCepService(){
