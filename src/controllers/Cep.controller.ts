@@ -34,6 +34,17 @@ class CepController {
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
+
+    public async postCepController(req: Request, res: Response): Promise<Response>{
+        try {
+            const create = req.body
+            const { data, message } = await CepService.postCepService(create)
+            return res.status(201).json({data, message})
+        }
+        catch(err){
+            return res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
 }
 
 export default new CepController()

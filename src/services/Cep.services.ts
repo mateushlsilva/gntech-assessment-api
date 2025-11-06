@@ -1,7 +1,7 @@
 import { AppDataSource, redis } from "../config"
 import { CepEntities } from "../entities/cep.entities"
 import { getCepData } from "../external";
-import { MessageCepReturn } from "../types";
+import { CepData, MessageCepReturn } from "../types";
 
 class CepService {
     public async getCepService(cep: string): Promise<MessageCepReturn>{
@@ -80,8 +80,27 @@ class CepService {
         }
     }
 
-    public async postCepService(){
-
+    public async postCepService(data: CepData): Promise<MessageCepReturn>{
+        try {
+            const cacheKey = `cep:${data.cep}`
+            const repository = AppDataSource.getRepository(CepEntities)
+            const newCep = repository.create({
+                cep: data.cep,
+                city: data.city,
+                neighborhood: data.neighborhood,
+                service: data.service,
+                state: data.state,
+                street: data.street,
+            });
+            const saveCep = await repository.save(newCep)
+            await redis.set(cacheKey, JSON.stringify(saveCep), "EX", 3600);
+            console.log("Cache miss (API)");
+            return {error: false, message: "success!", data: saveCep, source: 'Internal'}
+        }
+        catch (err: unknown){
+            const errorMessage = err instanceof Error ? err.message : "Unexpected error";
+            return { error: true, message: errorMessage, data: null, source: null };
+        }
     }
 
     public async putCepService(){

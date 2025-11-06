@@ -127,4 +127,94 @@ routes.get('/find/:cep', CepController.getCepController)
 
 routes.get('/all', CepController.getAllCepController)
 
+
+/**
+ * @swagger
+ * /cep/post:
+ *   post:
+ *     summary: Adiciona um novo CEP
+ *     description: Salva um novo CEP no banco de dados e no cache Redis.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cep
+ *               - state
+ *               - city
+ *               - neighborhood
+ *               - street
+ *               - service
+ *             properties:
+ *               cep:
+ *                 type: string
+ *                 example: "12236610"
+ *               state:
+ *                 type: string
+ *                 example: "SP"
+ *               city:
+ *                 type: string
+ *                 example: "São José dos Campos"
+ *               neighborhood:
+ *                 type: string
+ *                 example: "Cidade Morumbi"
+ *               street:
+ *                 type: string
+ *                 example: "Rua Maximino José de Almeida"
+ *               service:
+ *                 type: string
+ *                 example: "open-cep"
+ *     responses:
+ *       201:
+ *         description: CEP criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "success!"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     cep:
+ *                       type: string
+ *                       example: "12236610"
+ *                     state:
+ *                       type: string
+ *                       example: "SP"
+ *                     city:
+ *                       type: string
+ *                       example: "São José dos Campos"
+ *                     neighborhood:
+ *                       type: string
+ *                       example: "Cidade Morumbi"
+ *                     street:
+ *                       type: string
+ *                       example: "Rua Maximino José de Almeida"
+ *                     service:
+ *                       type: string
+ *                       example: "open-cep"
+ *       500:
+ *         description: Erro interno no servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error!"
+ */
+
+
+
+routes.post('/post', CepController.postCepController)
+
 export default routes
