@@ -7,6 +7,8 @@ const routes = Router()
  * @swagger
  * /cep/find/{cep}:
  *   get:
+ *     tags:
+ *       - CEP  
  *     summary: Busca informações de um CEP
  *     description: Retorna dados de um CEP. Caso não exista, salva e retorna o resultado.
  *     parameters:
@@ -55,6 +57,8 @@ routes.get('/find/:cep', CepController.getCepController)
  * @swagger
  * /cep/all:
  *   get:
+ *     tags:
+ *       - CEP
  *     summary: Retorna todos os CEPs com paginação
  *     description: Busca todos os CEPs armazenados, usando cache Redis se disponível. Permite paginar os resultados.
  *     parameters:
@@ -132,6 +136,8 @@ routes.get('/all', CepController.getAllCepController)
  * @swagger
  * /cep/post:
  *   post:
+ *     tags:
+ *       - CEP
  *     summary: Adiciona um novo CEP
  *     description: Salva um novo CEP no banco de dados e no cache Redis.
  *     requestBody:
@@ -221,6 +227,8 @@ routes.post('/post', CepController.postCepController)
  * @swagger
  * /cep/put/{id}:
  *   put:
+ *     tags:
+ *       - CEP
  *     summary: Atualiza um CEP existente
  *     description: Atualiza os dados de um CEP no banco de dados e no cache Redis.
  *     parameters:
@@ -319,5 +327,75 @@ routes.post('/post', CepController.postCepController)
  */
 
 routes.put('/put/:id', CepController.putCepController)
+
+/**
+ * @swagger
+ * /cep/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - CEP
+ *     summary: Deleta um CEP
+ *     description: Remove um CEP do banco de dados e do cache Redis.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do CEP a ser deletado
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: CEP deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "success!"
+ *                 error:
+ *                   type: boolean
+ *                   example: false
+ *       404:
+ *         description: CEP não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erro 404"
+ *                 error:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Erro ao deletar CEP
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erro ao deletar CEP"
+ *                 error:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error!"
+ */
+
+routes.delete('/delete/:id', CepController.deleteCepController)
 
 export default routes

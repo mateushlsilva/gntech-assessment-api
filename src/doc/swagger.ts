@@ -7,9 +7,14 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Minha API com Swagger",
+      title: "GNTech API",
       version: "1.0.0",
-      description: "Documentação automática com Swagger no Express",
+      description: "API para consulta e gerenciamento de CEPs, integrada com Redis e Postgres",
+      contact: {
+        name: "Mateus Silva",
+        email: "mateushls01@gmail.com",
+        url: "https://github.com/mateushlsilva",
+      },
     },
   },
   apis: [path.join(__dirname, "../routes/*.ts")], 

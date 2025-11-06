@@ -63,6 +63,23 @@ class CepController {
             return res.status(500).json({message: "Internal Server Error!"})
         }
     }
+
+    public async deleteCepController(req: Request, res: Response): Promise<Response>{
+        try{
+            const id = req.params.id
+            const { error, message } = await CepService.deleteCepService(id)
+            if (error && message === "Erro 404"){
+                return res.status(404).json({ message, error });
+            }
+            if (error) {
+                return res.status(400).json({message, error})
+            }
+            return res.status(200).json({message, error})
+        }
+        catch(err){
+            return res.status(500).json({message: "Internal Server Error!"})
+        }
+    }
 }
 
 export default new CepController()

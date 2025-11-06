@@ -136,8 +136,25 @@ class CepService {
         }
     }
 
-    public async deleteCepService(){
+    public async deleteCepService(id: any){
+        try{
+            const repository = AppDataSource.getRepository(CepEntities)
+            const findCep = await repository.findOneBy({id: id})
 
+            if (!findCep) {
+                return { error: true, message: "Erro 404", data: null, source: null }
+            }
+
+            const cacheKey = `cep:${findCep.cep}`
+            const remove = await repository.remove(findCep)
+            await redis.del(cacheKey);
+            console.log("Cache miss (API)");
+            return {error: false, message: "success!", data: remove, source: 'Internal'}
+        }
+        catch (err: unknown){
+            const errorMessage = err instanceof Error ? err.message : "Unexpected error";
+            return { error: true, message: errorMessage, data: null, source: null };
+        }
     }
 }
 
