@@ -18,4 +18,4 @@ ENV REDIS_PORT=6379
 
 RUN npm i
 
-CMD [ "npm", "start" ]
+CMD ["sh", "-c", "npm run migration:run && npm start"]
